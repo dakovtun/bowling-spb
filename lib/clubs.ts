@@ -416,6 +416,99 @@ export function getAllDistricts(): { name: string; count: number }[] {
     .map((name) => ({ name, count: map[name] }))
 }
 
+// ---------- Страницы районов ----------
+
+const DISTRICT_SLUGS: Record<string, string> = {
+  'Адмиралтейский район': 'admiralteysky',
+  'Выборгский район': 'vyborgsky',
+  'Красногвардейский район': 'krasnogvardeysky',
+  'Московский район': 'moskovsky',
+  'Приморский район': 'primorsky',
+  'Фрунзенский район': 'frunzensky'
+}
+
+export function districtSlug(name: string): string {
+  return DISTRICT_SLUGS[name] ?? name.toLowerCase().replace(/[^a-zа-яё0-9]+/gi, '-')
+}
+
+/**
+ * "Выборгский район" -> "Выборгском районе" (предложный падеж).
+ * Работает для всех районов СПб в текущей базе — они все оканчиваются на "-ский район".
+ */
+export function districtLocative(name: string): string {
+  return name.replace(/ский район$/, 'ском районе')
+}
+
+export function getDistrictBySlug(slug: string): { name: string; count: number } | undefined {
+  return getAllDistricts().find((d) => districtSlug(d.name) === slug)
+}
+
+// ---------- Подборки (сценарии) ----------
+
+export type ScenarioFilter = 'now' | 'kids' | 'late' | 'cheap'
+
+export interface ScenarioDef {
+  slug: string
+  filter: ScenarioFilter
+  homeLabel: string
+  h1: string
+  title: string
+  description: string
+  intro: string
+}
+
+export const SCENARIO_DEFS: ScenarioDef[] = [
+  {
+    slug: 'otkryto-seychas',
+    filter: 'now',
+    homeLabel: 'Открыто прямо сейчас',
+    h1: 'Боулинг в Петербурге, где открыто прямо сейчас',
+    title: 'Боулинг в Петербурге, где открыто сейчас',
+    description: 'Список открытых сейчас боулинг-клубов Петербурга — обновляется автоматически по расписанию каждого клуба.',
+    intro: 'Список актуален на момент открытия страницы и учитывает расписание каждого клуба по петербургскому времени.'
+  },
+  {
+    slug: 'dlya-detey',
+    filter: 'kids',
+    homeLabel: 'С детьми',
+    h1: 'Боулинг для детей в Петербурге',
+    title: 'Боулинг для детей в Петербурге',
+    description: 'Боулинг-клубы Петербурга с горкой и условиями для маленьких игроков: адреса, цены, часы работы.',
+    intro: 'Клубы, где есть горка для запуска шара без сложного броска и в целом спокойно относятся к детям на дорожках.'
+  },
+  {
+    slug: 'posle-polunochi',
+    filter: 'late',
+    homeLabel: 'После полуночи',
+    h1: 'Боулинг ночью и после полуночи в Петербурге',
+    title: 'Боулинг ночью в Петербурге',
+    description: 'Боулинг-клубы Петербурга, которые работают глубоко за полночь или круглосуточно.',
+    intro: 'Если хочется поиграть после полуночи или ищете круглосуточный клуб — вот кто в Петербурге работает допоздна.'
+  },
+  {
+    slug: 'nedorogo',
+    filter: 'cheap',
+    homeLabel: 'До 1500 ₽ за дорожку',
+    h1: 'Недорогой боулинг в Петербурге до 1500 ₽/час',
+    title: 'Недорогой боулинг в Петербурге',
+    description: 'Боулинг-клубы Петербурга с ценой дорожки до 1500 ₽ в час — по будням и в дневное время.',
+    intro: 'Цена дорожки в боулинге сильно зависит от дня недели и времени — здесь клубы, где даже пиковый тариф укладывается в 1500 ₽ за час.'
+  }
+]
+
+export function clubsForScenario(filter: ScenarioFilter, now = getSpbNow()): Club[] {
+  switch (filter) {
+    case 'now':
+      return CLUBS.filter((c) => isClubOpenNow(c, now))
+    case 'kids':
+      return CLUBS.filter((c) => c.tags.includes('kids'))
+    case 'late':
+      return CLUBS.filter((c) => c.tags.includes('late') || !!(c.sched && c.sched[0] && c.sched[0][1] >= 24))
+    case 'cheap':
+      return CLUBS.filter((c) => !!(c.priceFrom && c.priceFrom <= 1500))
+  }
+}
+
 export function getClubBySlug(slug: string): Club | undefined {
   return CLUBS.find((c) => c.slug === slug)
 }
@@ -432,15 +525,9 @@ export interface Scenario {
 
 export function getScenarios(): Scenario[] {
   const now = getSpbNow()
-  const countIf = (fn: (c: Club) => boolean) => CLUBS.filter(fn).length
-  return [
-    { title: 'Открыто прямо сейчас', count: pluralClubs(countIf((c) => isClubOpenNow(c, now))), href: '/clubs?filter=now' },
-    { title: 'С детьми', count: pluralClubs(countIf((c) => c.tags.includes('kids'))), href: '/clubs?filter=kids' },
-    {
-      title: 'После полуночи',
-      count: pluralClubs(countIf((c) => c.tags.includes('late') || !!(c.sched && c.sched[0] && c.sched[0][1] >= 24))),
-      href: '/clubs?filter=late'
-    },
-    { title: 'До 1500 ₽ за дорожку', count: pluralClubs(countIf((c) => !!(c.priceFrom && c.priceFrom <= 1500))), href: '/clubs?filter=cheap' }
-  ]
+  return SCENARIO_DEFS.map((s) => ({
+    title: s.homeLabel,
+    count: pluralClubs(clubsForScenario(s.filter, now).length),
+    href: `/clubs/podborka/${s.slug}`
+  }))
 }
