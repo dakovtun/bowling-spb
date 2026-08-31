@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     url: '/',
     siteName: SITE_NAME
+  },
+  verification: {
+    yandex: '78638f6a53611fb9'
   }
 }
 
