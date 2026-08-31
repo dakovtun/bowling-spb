@@ -1,6 +1,6 @@
 // Хелперы для генерации Schema.org / JSON-LD разметки.
 import { SITE_NAME, SITE_URL } from './constants'
-import type { Club } from './clubs'
+import type { Club, PriceTableData } from './clubs'
 
 const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -37,11 +37,32 @@ function parseReviewCount(reviews: string): number | undefined {
   return Math.round(n)
 }
 
+/**
+ * priceRange из реальных опубликованных цен клуба (lib/clubs.ts priceTables).
+ * Берёт только строки дорожек/боулинга, игнорирует бильярд и пул — это другая услуга.
+ * Если цены нигде не опубликованы (единый билет, "уточняйте по телефону") — не выдумывает диапазон.
+ */
+function priceRangeFromTables(tables: PriceTableData[]): string | undefined {
+  const prices: number[] = []
+  for (const t of tables) {
+    if (/бильярд|пул/i.test(t.title)) continue
+    for (const row of t.rows) {
+      const n = parseInt(row.price.replace(/\D/g, ''), 10)
+      if (!Number.isNaN(n)) prices.push(n)
+    }
+  }
+  if (!prices.length) return undefined
+  const min = Math.min(...prices)
+  const max = Math.max(...prices)
+  return min === max ? `${min} ₽` : `${min}–${max} ₽`
+}
+
 /** BowlingAlley-разметка карточки клуба. */
 export function clubSchema(club: Club) {
   const url = `${SITE_URL}/clubs/${club.slug}`
   const reviewCount = parseReviewCount(club.reviews)
   const hours = openingHoursSpecification(club.sched)
+  const priceRange = priceRangeFromTables(club.priceTables)
 
   return {
     '@context': 'https://schema.org',
@@ -62,6 +83,7 @@ export function clubSchema(club: Club) {
     },
     ...(club.images[0] ? { image: club.images[0].url } : {}),
     ...(club.website ? { sameAs: [club.website] } : {}),
+    ...(priceRange ? { priceRange } : {}),
     ...(reviewCount
       ? {
           aggregateRating: {
