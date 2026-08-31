@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-bg text-ink antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-extrabold tracking-tight text-ink;
+  }
+  a {
+    @apply text-accent;
+  }
+  a:hover {
+    @apply text-accent-dark;
+  }
+  ::selection {
+    background: rgba(236, 48, 19, 0.28);
+  }
+  :focus-visible {
+    outline: 2px solid #ec3013;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-[1320px] px-6;
+  }
+  .eyebrow {
+    @apply text-[11px] uppercase tracking-[0.1em] text-muted;
+  }
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 bg-accent px-5 py-3.5 text-sm font-extrabold text-paper transition hover:bg-accent-dark;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 border border-ink/40 bg-transparent px-5 py-3.5 text-sm font-extrabold text-ink transition hover:bg-ink/5;
+  }
+  .chip {
+    @apply cursor-pointer border border-ink/40 px-3 py-1.5 text-[13px] font-extrabold transition;
+  }
+  .badge-pill {
+    @apply px-2 py-1 text-[11px] font-extrabold uppercase tracking-[0.06em];
+  }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.grayscale-photo {
+  filter: grayscale(1) contrast(1.08);
+}
+
+.map-grid-bg {
+  background-image:
+    repeating-linear-gradient(0deg, #e3e0e0 0 1px, transparent 1px 44px),
+    repeating-linear-gradient(90deg, #e3e0e0 0 1px, transparent 1px 44px);
+  background-color: #eae9e9;
+}
