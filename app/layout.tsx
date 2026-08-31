@@ -3,6 +3,7 @@ import { Archivo } from 'next/font/google'
 import './globals.css'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
+import { YandexMetrika } from '../components/YandexMetrika'
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '../lib/constants'
 
 const archivo = Archivo({
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ru" className={archivo.variable}>
       <body className="flex min-h-screen flex-col items-center bg-bg font-sans">
+        <YandexMetrika />
         <div className="w-full max-w-[1320px] overflow-hidden border-2 border-ink bg-paper">
           <Header />
           <main>{children}</main>
