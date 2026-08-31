@@ -4,6 +4,7 @@ import './globals.css'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
 import { YandexMetrika } from '../components/YandexMetrika'
+import { GoogleAnalytics } from '../components/GoogleAnalytics'
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '../lib/constants'
 
 const archivo = Archivo({
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ru" className={archivo.variable}>
       <body className="flex min-h-screen flex-col items-center bg-bg font-sans">
         <YandexMetrika />
+        <GoogleAnalytics />
         <div className="w-full max-w-[1320px] overflow-hidden border-2 border-ink bg-paper">
           <Header />
           <main>{children}</main>
