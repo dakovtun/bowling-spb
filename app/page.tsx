@@ -1,8 +1,11 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CLUBS, getAllDistricts, getScenarios, getTopRatedClubs, homeMapPin, markerIsRed } from '../lib/clubs'
 import { ClubCard } from '../components/ClubCard'
 import { ClubsMapBlock } from '../components/ClubsMapBlock'
 
+export const metadata: Metadata = { alternates: { canonical: '/' } }
+  
 export const revalidate = 300
 
 export default function HomePage() {
