@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { CLUBS, getAllDistricts } from '../../lib/clubs'
+import { breadcrumbSchema, clubsListSchema } from '../../lib/schema'
 import { ClubsExplorer } from '../../components/ClubsExplorer'
+import { JsonLd } from '../../components/JsonLd'
 
 export const revalidate = 300
 
@@ -20,7 +22,10 @@ export default function ClubsPage({ searchParams }: { searchParams: { district?:
   const initialView = searchParams.view === 'map' ? 'map' : 'list'
 
   return (
-    <div>
+    <>
+      <JsonLd data={clubsListSchema(CLUBS)} />
+      <JsonLd data={breadcrumbSchema([{ name: 'Главная', path: '/' }, { name: 'Клубы' }])} />
+      <div>
       <section className="border-b-2 border-ink/40 px-6 pb-6 pt-9">
         <div className="eyebrow mb-3">Каталог</div>
         <h1 className="mb-3 text-[44px] font-extrabold leading-none tracking-tight">Боулинг-клубы Петербурга</h1>
@@ -35,6 +40,7 @@ export default function ClubsPage({ searchParams }: { searchParams: { district?:
         initialFilter={initialFilter}
         initialView={initialView}
       />
-    </div>
+      </div>
+    </>
   )
 }
