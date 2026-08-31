@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CLUBS, getAllDistricts, getScenarios, getTopRatedClubs, homeMapPin, markerIsRed } from '../lib/clubs'
+import { CLUBS, districtSlug, getAllDistricts, getScenarios, getTopRatedClubs, homeMapPin, markerIsRed } from '../lib/clubs'
 import { websiteSchema } from '../lib/schema'
 import { ClubCard } from '../components/ClubCard'
 import { ClubsMapBlock } from '../components/ClubsMapBlock'
@@ -115,7 +115,7 @@ export default function HomePage() {
           {districts.map((d) => (
             <Link
               key={d.name}
-              href={`/clubs?district=${encodeURIComponent(d.name)}`}
+              href={`/clubs/rayon/${districtSlug(d.name)}`}
               className="flex items-baseline justify-between gap-3 border-b border-ink/20 py-3.5 text-ink no-underline hover:text-ink"
             >
               <span className="text-base font-extrabold">{d.name}</span>

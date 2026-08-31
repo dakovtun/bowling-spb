@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next'
-import { CLUBS } from '../lib/clubs'
+import { CLUBS, SCENARIO_DEFS, districtSlug, getAllDistricts } from '../lib/clubs'
 import { SITE_URL } from '../lib/constants'
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -11,5 +11,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${SITE_URL}/clubs/${club.slug}`,
     lastModified: new Date()
   }))
-  return [...staticPages, ...clubPages]
+  const districtPages = getAllDistricts().map((d) => ({
+    url: `${SITE_URL}/clubs/rayon/${districtSlug(d.name)}`,
+    lastModified: new Date()
+  }))
+  const scenarioPages = SCENARIO_DEFS.map((s) => ({
+    url: `${SITE_URL}/clubs/podborka/${s.slug}`,
+    lastModified: new Date()
+  }))
+  return [...staticPages, ...clubPages, ...districtPages, ...scenarioPages]
 }
