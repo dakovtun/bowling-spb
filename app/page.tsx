@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CLUBS, getAllDistricts, getScenarios, getTopRatedClubs, homeMapPin, markerIsRed } from '../lib/clubs'
+import { websiteSchema } from '../lib/schema'
 import { ClubCard } from '../components/ClubCard'
 import { ClubsMapBlock } from '../components/ClubsMapBlock'
+import { JsonLd } from '../components/JsonLd'
 
 export const metadata: Metadata = { alternates: { canonical: '/' } }
-  
+
 export const revalidate = 300
 
 export default function HomePage() {
@@ -15,7 +17,9 @@ export default function HomePage() {
   const minPrice = Math.min(...CLUBS.map((c) => c.priceFrom ?? Infinity))
 
   return (
-    <div>
+    <>
+      <JsonLd data={websiteSchema()} />
+      <div>
       {/* Hero */}
       <section className="grid grid-cols-1 border-b-2 border-ink/40 [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">
         <div className="border-r-0 border-ink/20 px-6 pb-10 pt-14 sm:border-r">
@@ -152,6 +156,7 @@ export default function HomePage() {
           Написать нам →
         </Link>
       </section>
-    </div>
+      </div>
+    </>
   )
 }
