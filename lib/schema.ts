@@ -81,7 +81,7 @@ export function clubSchema(club: Club) {
       latitude: club.lat,
       longitude: club.lng
     },
-    ...(club.images[0] ? { image: club.images[0].url } : {}),
+    ...(club.images[0] ? { image: `${SITE_URL}${club.images[0].url}` } : {}),
     ...(club.website ? { sameAs: [club.website] } : {}),
     ...(priceRange ? { priceRange } : {}),
     ...(reviewCount

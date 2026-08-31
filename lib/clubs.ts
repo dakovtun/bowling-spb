@@ -70,7 +70,7 @@ export const CLUBS: Club[] = [
     priceTables: [],
     quote: 'Мохито безалкогольный — вода, мята, лёд, лимон и капля спрайта.',
     mapUrl: 'https://www.google.com/maps/dir//Альмак,+Новолитовская+ул.,+15а,+Санкт-Петербург',
-    images: [{ url: 'https://optim.tildacdn.com/tild3037-3463-4462-b864-313334313361/-/format/webp/Bouling_2.jpg.webp', alt: 'Дорожки «Альмак»' }]
+    images: [{ url: '/images/clubs/almak-1.webp', alt: 'Дорожки «Альмак»' }]
   },
   {
     slug: 'pitergame-sennaya',
@@ -116,8 +116,8 @@ export const CLUBS: Club[] = [
     quote: '',
     mapUrl: 'https://www.google.com/maps/dir//Боулинг+на+Сенной,+ул.+Ефимова,+3,+Санкт-Петербург',
     images: [
-      { url: 'https://pitergame.ru/main.png', alt: 'Боулинг PiterGame' },
-      { url: 'https://pitergame.ru/event_new.png', alt: 'Мероприятия в PiterGame' }
+      { url: '/images/clubs/pitergame-main.jpg', alt: 'Боулинг PiterGame' },
+      { url: '/images/clubs/pitergame-event.jpg', alt: 'Мероприятия в PiterGame' }
     ]
   },
   {
@@ -163,8 +163,8 @@ export const CLUBS: Club[] = [
     quote: 'Есть специальная горка для маленьких детей, чтобы пускать шарики.',
     mapUrl: 'https://www.google.com/maps/dir//Боулинг+на+Типанова,+ул.+Типанова,+21,+Санкт-Петербург',
     images: [
-      { url: 'https://pitergame.ru/event_new.png', alt: 'Боулинг на Типанова' },
-      { url: 'https://pitergame.ru/main.png', alt: 'Зал PiterGame' }
+      { url: '/images/clubs/pitergame-event.jpg', alt: 'Боулинг на Типанова' },
+      { url: '/images/clubs/pitergame-main.jpg', alt: 'Зал PiterGame' }
     ]
   },
   {
@@ -234,8 +234,8 @@ export const CLUBS: Club[] = [
     quote: 'Нам понравилось, но хотели ещё и не можем дозвониться.',
     mapUrl: 'https://www.google.com/maps/dir//Боулинг+Нептун,+набережная+Обводного+канала,+93-а,+Санкт-Петербург',
     images: [
-      { url: 'https://bowl.neptun.spb.ru/upload/iblock/b31/Guzeev_7851_1.jpg', alt: 'Дорожки «Нептун»' },
-      { url: 'https://bowl.neptun.spb.ru/upload/iblock/fe8/img_1.jpg', alt: 'Зал «Нептун»' }
+      { url: '/images/clubs/neptun-1.jpg', alt: 'Дорожки «Нептун»' },
+      { url: '/images/clubs/neptun-2.jpg', alt: 'Зал «Нептун»' }
     ]
   },
   {
@@ -289,8 +289,8 @@ export const CLUBS: Club[] = [
     quote: 'Посещали парк вчера с друзьями, вкусно поели, классно поиграли.',
     mapUrl: 'https://mazapark.ru/spb-bukharestskaya/',
     images: [
-      { url: 'https://mazapark.ru/upload/resize_cache/iblock/f66/1200_1200_0/qc8ixc54ypk63octc9f81pqkpol4m2m1.jpg', alt: 'Зона боулинга в MazaPark' },
-      { url: 'https://mazapark.ru/upload/resize_cache/iblock/de8/1200_1200_0/0m4vb8pvivt0j6joykbfjsa8wv0dk32w.jpg', alt: 'MazaPark' }
+      { url: '/images/clubs/mazapark-1.jpg', alt: 'Зона боулинга в MazaPark' },
+      { url: '/images/clubs/mazapark-2.jpg', alt: 'MazaPark' }
     ]
   },
   {
@@ -318,8 +318,8 @@ export const CLUBS: Club[] = [
     quote: 'Цены адекватные, особенно приятно, что работают до 23:00.',
     mapUrl: 'https://mazapark.ru/spb-baykonurskaya/',
     images: [
-      { url: 'https://mazapark.ru/upload/resize_cache/iblock/de8/1200_1200_0/0m4vb8pvivt0j6joykbfjsa8wv0dk32w.jpg', alt: 'MazaPark на Байконурской' },
-      { url: 'https://mazapark.ru/upload/resize_cache/iblock/f66/1200_1200_0/qc8ixc54ypk63octc9f81pqkpol4m2m1.jpg', alt: 'Зона боулинга' }
+      { url: '/images/clubs/mazapark-2.jpg', alt: 'MazaPark на Байконурской' },
+      { url: '/images/clubs/mazapark-1.jpg', alt: 'Зона боулинга' }
     ]
   }
 ]
