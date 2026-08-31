@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { CLUBS, districtSlug, getAllDistricts, getScenarios, getTopRatedClubs, homeMapPin, markerIsRed } from '../lib/clubs'
-import { websiteSchema } from '../lib/schema'
+import { FAQ_ITEMS } from '../lib/faq'
+import { faqSchema, websiteSchema } from '../lib/schema'
 import { ClubCard } from '../components/ClubCard'
 import { ClubsMapBlock } from '../components/ClubsMapBlock'
+import { Faq } from '../components/Faq'
 import { JsonLd } from '../components/JsonLd'
 
 export const metadata: Metadata = { alternates: { canonical: '/' } }
@@ -19,6 +21,7 @@ export default function HomePage() {
   return (
     <>
       <JsonLd data={websiteSchema()} />
+      <JsonLd data={faqSchema(FAQ_ITEMS)} />
       <div>
       {/* Hero */}
       <section className="grid grid-cols-1 border-b-2 border-ink/40 [grid-template-columns:repeat(auto-fit,minmax(320px,1fr))]">
@@ -143,6 +146,8 @@ export default function HomePage() {
           </p>
         </div>
       </section>
+
+      <Faq items={FAQ_ITEMS} />
 
       {/* CTA */}
       <section className="flex flex-wrap items-end justify-between gap-6 bg-accent px-6 py-[52px] text-paper">
