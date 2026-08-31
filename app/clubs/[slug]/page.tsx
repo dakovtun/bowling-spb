@@ -2,10 +2,12 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { CLUBS, clubMapPin, getClubBySlug, isClubOpenNow } from '../../../lib/clubs'
+import { breadcrumbSchema, clubSchema } from '../../../lib/schema'
 import { PriceTable } from '../../../components/PriceTable'
 import { BowlingIcon } from '../../../components/BowlingIcon'
 import { ClubCardCompact } from '../../../components/ClubCard'
 import { ClubsMapBlock } from '../../../components/ClubsMapBlock'
+import { JsonLd } from '../../../components/JsonLd'
 
 export const revalidate = 300
 
@@ -34,7 +36,16 @@ export default function ClubPage({ params }: { params: { slug: string } }) {
   const telHref = club.phone ? `tel:${club.phone.replace(/[^+\d]/g, '')}` : undefined
 
   return (
-    <div>
+    <>
+      <JsonLd data={clubSchema(club)} />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: 'Главная', path: '/' },
+          { name: 'Клубы', path: '/clubs' },
+          { name: club.name }
+        ])}
+      />
+      <div>
       <div className="border-b border-ink/20 px-6 py-3.5">
         <Link href="/clubs" className="text-[13px] font-extrabold uppercase tracking-[0.04em] no-underline">
           ← Ко всем клубам
@@ -166,6 +177,7 @@ export default function ClubPage({ params }: { params: { slug: string } }) {
           ))}
         </div>
       </section>
-    </div>
+      </div>
+    </>
   )
 }
