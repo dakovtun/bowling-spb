@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { CLUBS, SCENARIO_DEFS, clubsForScenario, getAllDistricts } from '../../../../lib/clubs'
+import { SCENARIO_DEFS, clubsForScenario, getAllDistricts } from '../../../../lib/clubs'
+import { fetchClubs } from '../../../../lib/db'
 import { breadcrumbSchema, clubsListSchema } from '../../../../lib/schema'
 import { ClubsExplorer } from '../../../../components/ClubsExplorer'
 import { JsonLd } from '../../../../components/JsonLd'
@@ -21,12 +22,13 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   }
 }
 
-export default function ScenarioPage({ params }: { params: { slug: string } }) {
+export default async function ScenarioPage({ params }: { params: { slug: string } }) {
   const scenario = SCENARIO_DEFS.find((s) => s.slug === params.slug)
   if (!scenario) notFound()
 
-  const districts = getAllDistricts()
-  const scenarioClubs = clubsForScenario(scenario.filter)
+  const clubs = await fetchClubs()
+  const districts = getAllDistricts(clubs)
+  const scenarioClubs = clubsForScenario(scenario.filter, clubs)
 
   return (
     <>
@@ -44,7 +46,7 @@ export default function ScenarioPage({ params }: { params: { slug: string } }) {
           <h1 className="mb-3 text-[44px] font-extrabold leading-none tracking-tight">{scenario.h1}</h1>
           <p className="max-w-[60ch] text-muted2">{scenario.intro}</p>
         </section>
-        <ClubsExplorer clubs={CLUBS} districts={districts} initialFilter={scenario.filter} />
+        <ClubsExplorer clubs={clubs} districts={districts} initialFilter={scenario.filter} />
       </div>
     </>
   )

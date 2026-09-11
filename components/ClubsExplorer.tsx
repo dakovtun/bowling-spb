@@ -201,7 +201,7 @@ export function ClubsExplorer({
             markers={filtered.map((c) => ({ lat: c.lat, lng: c.lng, label: c.name, href: `/clubs/${c.slug}`, active: markerIsRed(c) }))}
             stubPins={filtered.map((c) => {
               const pin = clubMapPin(c)
-              return { x: pin.x, y: pin.y, label: clubNumber(c.slug), href: `/clubs/${c.slug}`, active: markerIsRed(c) }
+              return { x: pin.x, y: pin.y, label: clubNumber(c.slug, clubs), href: `/clubs/${c.slug}`, active: markerIsRed(c) }
             })}
           />
           <div>
@@ -212,7 +212,7 @@ export function ClubsExplorer({
                 href={`/clubs/${c.slug}`}
                 className="grid grid-cols-[28px_1fr_auto] items-baseline gap-3 border-b border-ink/20 py-3 text-ink no-underline hover:text-ink"
               >
-                <span className="text-xs text-muted">{clubNumber(c.slug)}</span>
+                <span className="text-xs text-muted">{clubNumber(c.slug, clubs)}</span>
                 <span>
                   <span className="text-base font-extrabold">{c.name}</span>
                   <br />
@@ -231,7 +231,7 @@ export function ClubsExplorer({
               <ClubCard
                 key={c.slug}
                 club={c}
-                number={clubNumber(c.slug)}
+                number={clubNumber(c.slug, clubs)}
                 hidePromo
                 footer={
                   <button

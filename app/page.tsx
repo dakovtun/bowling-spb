@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CLUBS, districtSlug, getAllDistricts, getScenarios, getTopRatedClubs, homeMapPin, markerIsRed } from '../lib/clubs'
+import { districtSlug, getAllDistricts, getScenarios, getTopRatedClubs, homeMapPin, markerIsRed } from '../lib/clubs'
+import { fetchClubs } from '../lib/db'
 import { FAQ_ITEMS } from '../lib/faq'
 import { faqSchema, websiteSchema } from '../lib/schema'
 import { ClubCard } from '../components/ClubCard'
@@ -12,11 +13,12 @@ export const metadata: Metadata = { alternates: { canonical: '/' } }
 
 export const revalidate = 300
 
-export default function HomePage() {
-  const districts = getAllDistricts()
-  const topRated = getTopRatedClubs(3)
-  const scenarios = getScenarios()
-  const minPrice = Math.min(...CLUBS.map((c) => c.priceFrom ?? Infinity))
+export default async function HomePage() {
+  const clubs = await fetchClubs()
+  const districts = getAllDistricts(clubs)
+  const topRated = getTopRatedClubs(clubs, 3)
+  const scenarios = getScenarios(clubs)
+  const minPrice = Math.min(...clubs.map((c) => c.priceFrom ?? Infinity))
 
   return (
     <>
@@ -50,7 +52,7 @@ export default function HomePage() {
         <div className="flex flex-col">
           <div className="grid grid-cols-3 gap-4 bg-accent px-6 py-7 text-paper">
             <div>
-              <div className="text-[44px] font-extrabold leading-none">{CLUBS.length}</div>
+              <div className="text-[44px] font-extrabold leading-none">{clubs.length}</div>
               <div className="text-xs uppercase tracking-[0.06em] opacity-85">клубов</div>
             </div>
             <div>
@@ -103,8 +105,8 @@ export default function HomePage() {
         </div>
         <ClubsMapBlock
           className="aspect-square min-h-[280px] sm:aspect-[2.4]"
-          markers={CLUBS.map((c) => ({ lat: c.lat, lng: c.lng, label: c.name, href: `/clubs/${c.slug}`, active: markerIsRed(c) }))}
-          stubPins={CLUBS.map((c) => {
+          markers={clubs.map((c) => ({ lat: c.lat, lng: c.lng, label: c.name, href: `/clubs/${c.slug}`, active: markerIsRed(c) }))}
+          stubPins={clubs.map((c) => {
             const pin = homeMapPin(c)
             return { x: pin.x, y: pin.y, label: c.name, href: `/clubs/${c.slug}`, active: markerIsRed(c) }
           })}

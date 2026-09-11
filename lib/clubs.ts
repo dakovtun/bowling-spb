@@ -45,7 +45,12 @@ export interface Club {
   images: ClubImage[]
 }
 
-export const CLUBS: Club[] = [
+// SEED_CLUBS — исходные данные каталога. С переходом на Vercel KV это больше
+// не единственный источник правды: реальные данные читаются и пишутся через
+// lib/db.ts (fetchClubs/saveClubs). SEED_CLUBS используется только как:
+//   1) начальное наполнение KV-хранилища (см. scripts/seed.ts),
+//   2) резервный источник, если KV недоступен или ещё не заполнен.
+export const SEED_CLUBS: Club[] = [
   {
     slug: 'almak',
     name: 'Альмак',
@@ -469,12 +474,12 @@ export const CLUBS: Club[] = [
 /** Границы карты СПб для перевода координат клубов в проценты x/y. */
 const MAP_BOUNDS = { w: 30.1, e: 30.62, s: 59.83, n: 60.03 }
 
-export function clubIndex(slug: string): number {
-  return CLUBS.findIndex((c) => c.slug === slug)
+export function clubIndex(slug: string, clubs: Club[]): number {
+  return clubs.findIndex((c) => c.slug === slug)
 }
 
-export function clubNumber(slug: string): string {
-  const i = clubIndex(slug)
+export function clubNumber(slug: string, clubs: Club[]): string {
+  const i = clubIndex(slug, clubs)
   return String(i + 1).padStart(2, '0')
 }
 
@@ -546,9 +551,9 @@ export function pluralClubs(n: number): string {
   return `${n} ${clubWord(n)}`
 }
 
-export function getAllDistricts(): { name: string; count: number }[] {
+export function getAllDistricts(clubs: Club[]): { name: string; count: number }[] {
   const map: Record<string, number> = {}
-  CLUBS.forEach((c) => {
+  clubs.forEach((c) => {
     map[c.district] = (map[c.district] || 0) + 1
   })
   return Object.keys(map)
@@ -580,8 +585,8 @@ export function districtLocative(name: string): string {
   return name.replace(/ский район$/, 'ском районе')
 }
 
-export function getDistrictBySlug(slug: string): { name: string; count: number } | undefined {
-  return getAllDistricts().find((d) => districtSlug(d.name) === slug)
+export function getDistrictBySlug(slug: string, clubs: Club[]): { name: string; count: number } | undefined {
+  return getAllDistricts(clubs).find((d) => districtSlug(d.name) === slug)
 }
 
 // ---------- Подборки (сценарии) ----------
@@ -637,25 +642,25 @@ export const SCENARIO_DEFS: ScenarioDef[] = [
   }
 ]
 
-export function clubsForScenario(filter: ScenarioFilter, now = getSpbNow()): Club[] {
+export function clubsForScenario(filter: ScenarioFilter, clubs: Club[], now = getSpbNow()): Club[] {
   switch (filter) {
     case 'now':
-      return CLUBS.filter((c) => isClubOpenNow(c, now))
+      return clubs.filter((c) => isClubOpenNow(c, now))
     case 'kids':
-      return CLUBS.filter((c) => c.tags.includes('kids'))
+      return clubs.filter((c) => c.tags.includes('kids'))
     case 'late':
-      return CLUBS.filter((c) => c.tags.includes('late') || !!(c.sched && c.sched[0] && c.sched[0][1] >= 24))
+      return clubs.filter((c) => c.tags.includes('late') || !!(c.sched && c.sched[0] && c.sched[0][1] >= 24))
     case 'cheap':
-      return CLUBS.filter((c) => !!(c.priceFrom && c.priceFrom <= 1500))
+      return clubs.filter((c) => !!(c.priceFrom && c.priceFrom <= 1500))
   }
 }
 
-export function getClubBySlug(slug: string): Club | undefined {
-  return CLUBS.find((c) => c.slug === slug)
+export function getClubBySlug(slug: string, clubs: Club[]): Club | undefined {
+  return clubs.find((c) => c.slug === slug)
 }
 
-export function getTopRatedClubs(limit = 3): Club[] {
-  return [...CLUBS].sort((a, b) => b.rating - a.rating).slice(0, limit)
+export function getTopRatedClubs(clubs: Club[], limit = 3): Club[] {
+  return [...clubs].sort((a, b) => b.rating - a.rating).slice(0, limit)
 }
 
 export interface Scenario {
@@ -664,11 +669,11 @@ export interface Scenario {
   href: string
 }
 
-export function getScenarios(): Scenario[] {
+export function getScenarios(clubs: Club[]): Scenario[] {
   const now = getSpbNow()
   return SCENARIO_DEFS.map((s) => ({
     title: s.homeLabel,
-    count: pluralClubs(clubsForScenario(s.filter, now).length),
+    count: pluralClubs(clubsForScenario(s.filter, clubs, now).length),
     href: `/clubs/podborka/${s.slug}`
   }))
 }

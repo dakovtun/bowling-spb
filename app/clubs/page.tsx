@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { CLUBS, getAllDistricts } from '../../lib/clubs'
+import { getAllDistricts } from '../../lib/clubs'
+import { fetchClubs } from '../../lib/db'
 import { breadcrumbSchema, clubsListSchema } from '../../lib/schema'
 import { ClubsExplorer } from '../../components/ClubsExplorer'
 import { JsonLd } from '../../components/JsonLd'
@@ -14,8 +15,13 @@ export const metadata: Metadata = {
 
 const FILTER_KEYS = ['now', 'late', 'kids', 'bar', 'cheap'] as const
 
-export default function ClubsPage({ searchParams }: { searchParams: { district?: string; filter?: string; view?: string } }) {
-  const districts = getAllDistricts()
+export default async function ClubsPage({
+  searchParams
+}: {
+  searchParams: { district?: string; filter?: string; view?: string }
+}) {
+  const clubs = await fetchClubs()
+  const districts = getAllDistricts(clubs)
   const initialDistrict =
     searchParams.district && districts.some((d) => d.name === searchParams.district) ? searchParams.district : 'all'
   const initialFilter = FILTER_KEYS.find((f) => f === searchParams.filter)
@@ -23,7 +29,7 @@ export default function ClubsPage({ searchParams }: { searchParams: { district?:
 
   return (
     <>
-      <JsonLd data={clubsListSchema(CLUBS)} />
+      <JsonLd data={clubsListSchema(clubs)} />
       <JsonLd data={breadcrumbSchema([{ name: 'Главная', path: '/' }, { name: 'Клубы' }])} />
       <div>
       <section className="border-b-2 border-ink/40 px-6 pb-6 pt-9">
@@ -34,7 +40,7 @@ export default function ClubsPage({ searchParams }: { searchParams: { district?:
         </p>
       </section>
       <ClubsExplorer
-        clubs={CLUBS}
+        clubs={clubs}
         districts={districts}
         initialDistrict={initialDistrict}
         initialFilter={initialFilter}
