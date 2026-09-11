@@ -1,18 +1,24 @@
 import { ImageResponse } from 'next/og'
 import { getClubBySlug, priceLabel } from '../../../lib/clubs'
+import { fetchClubs } from '../../../lib/db'
 import { SITE_NAME } from '../../../lib/constants'
 
+// ВНИМАНИЕ: этот файл раньше работал в edge-рантайме. lib/db.ts использует
+// @upstash/redis, который в edge-рантайме тоже поддерживается (это HTTP REST
+// клиент, не завязанный на Node.js API), так что runtime='edge' оставлен как есть.
 export const runtime = 'edge'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
 export async function generateImageMetadata({ params }: { params: { slug: string } }) {
-  const club = getClubBySlug(params.slug)
+  const clubs = await fetchClubs()
+  const club = getClubBySlug(params.slug, clubs)
   return [{ id: 'default', alt: club ? `${club.name} — ${SITE_NAME}` : SITE_NAME, size, contentType }]
 }
 
 export default async function Image({ params }: { params: { slug: string } }) {
-  const club = getClubBySlug(params.slug)
+  const clubs = await fetchClubs()
+  const club = getClubBySlug(params.slug, clubs)
   const title = club?.name ?? SITE_NAME
   const meta = club ? [club.district, priceLabel(club)].filter(Boolean).join(' · ') : ''
 

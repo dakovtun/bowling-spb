@@ -1,18 +1,21 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { CLUBS, districtLocative, districtSlug, getAllDistricts, getDistrictBySlug, pluralClubs } from '../../../../lib/clubs'
+import { districtLocative, districtSlug, getAllDistricts, getDistrictBySlug, pluralClubs } from '../../../../lib/clubs'
+import { fetchClubs } from '../../../../lib/db'
 import { breadcrumbSchema, clubsListSchema } from '../../../../lib/schema'
 import { ClubsExplorer } from '../../../../components/ClubsExplorer'
 import { JsonLd } from '../../../../components/JsonLd'
 
 export const revalidate = 300
 
-export function generateStaticParams() {
-  return getAllDistricts().map((d) => ({ slug: districtSlug(d.name) }))
+export async function generateStaticParams() {
+  const clubs = await fetchClubs()
+  return getAllDistricts(clubs).map((d) => ({ slug: districtSlug(d.name) }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const district = getDistrictBySlug(params.slug)
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const clubs = await fetchClubs()
+  const district = getDistrictBySlug(params.slug, clubs)
   if (!district) return {}
   const loc = districtLocative(district.name)
   return {
@@ -22,13 +25,14 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   }
 }
 
-export default function DistrictPage({ params }: { params: { slug: string } }) {
-  const district = getDistrictBySlug(params.slug)
+export default async function DistrictPage({ params }: { params: { slug: string } }) {
+  const clubs = await fetchClubs()
+  const district = getDistrictBySlug(params.slug, clubs)
   if (!district) notFound()
 
   const loc = districtLocative(district.name)
-  const districts = getAllDistricts()
-  const districtClubs = CLUBS.filter((c) => c.district === district.name)
+  const districts = getAllDistricts(clubs)
+  const districtClubs = clubs.filter((c) => c.district === district.name)
 
   return (
     <>
@@ -48,7 +52,7 @@ export default function DistrictPage({ params }: { params: { slug: string } }) {
             {pluralClubs(district.count)} в {loc} Санкт-Петербурга — актуальные цены, часы работы и рейтинг.
           </p>
         </section>
-        <ClubsExplorer clubs={CLUBS} districts={districts} initialDistrict={district.name} />
+        <ClubsExplorer clubs={clubs} districts={districts} initialDistrict={district.name} />
       </div>
     </>
   )

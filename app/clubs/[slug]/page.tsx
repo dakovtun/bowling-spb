@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { CLUBS, clubMapPin, getClubBySlug, isClubOpenNow } from '../../../lib/clubs'
+import { clubMapPin, getClubBySlug, isClubOpenNow } from '../../../lib/clubs'
+import { fetchClubs } from '../../../lib/db'
 import { breadcrumbSchema, clubSchema } from '../../../lib/schema'
 import { PriceTable } from '../../../components/PriceTable'
 import { BowlingIcon } from '../../../components/BowlingIcon'
@@ -11,12 +12,14 @@ import { JsonLd } from '../../../components/JsonLd'
 
 export const revalidate = 300
 
-export function generateStaticParams() {
-  return CLUBS.map((club) => ({ slug: club.slug }))
+export async function generateStaticParams() {
+  const clubs = await fetchClubs()
+  return clubs.map((club) => ({ slug: club.slug }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const club = getClubBySlug(params.slug)
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const clubs = await fetchClubs()
+  const club = getClubBySlug(params.slug, clubs)
   if (!club) return {}
   return {
     title: club.name,
@@ -25,13 +28,14 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   }
 }
 
-export default function ClubPage({ params }: { params: { slug: string } }) {
-  const club = getClubBySlug(params.slug)
+export default async function ClubPage({ params }: { params: { slug: string } }) {
+  const clubs = await fetchClubs()
+  const club = getClubBySlug(params.slug, clubs)
   if (!club) notFound()
 
   const openNow = isClubOpenNow(club)
   const pin = clubMapPin(club)
-  const nearby = CLUBS.filter((c) => c.slug !== club.slug).slice(0, 3)
+  const nearby = clubs.filter((c) => c.slug !== club.slug).slice(0, 3)
   const images = club.images.length ? club.images : [{ url: '', alt: 'Фото клуба' }]
   const telHref = club.phone ? `tel:${club.phone.replace(/[^+\d]/g, '')}` : undefined
 

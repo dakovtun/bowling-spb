@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CLUBS, getAllDistricts } from '../../lib/clubs'
+import { getAllDistricts } from '../../lib/clubs'
+import { fetchClubs } from '../../lib/db'
 
 export const metadata: Metadata = {
   title: 'О проекте',
@@ -26,10 +27,11 @@ const METHOD_STEPS = [
   }
 ]
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const clubs = await fetchClubs()
   const facts = [
-    { value: String(CLUBS.length), label: 'клубов в каталоге' },
-    { value: String(getAllDistricts().length), label: 'районов города' },
+    { value: String(clubs.length), label: 'клубов в каталоге' },
+    { value: String(getAllDistricts(clubs).length), label: 'районов города' },
     { value: '0 ₽', label: 'платных размещений' },
     { value: '2026', label: 'последняя сверка данных' }
   ]
