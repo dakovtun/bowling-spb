@@ -28,7 +28,7 @@ export default function HomePage() {
         <div className="border-r-0 border-ink/20 px-6 pb-10 pt-14 sm:border-r">
           <div className="eyebrow mb-5">Независимый гид</div>
           <h1 className="mb-5 text-[46px] font-extrabold leading-none tracking-tight">
-            Восемь мест
+            Тринадцать мест
             <br />в Петербурге,
             <br />где катают
             <br />
